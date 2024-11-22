@@ -1,9 +1,22 @@
-# Assignment 5 - Interprocess Communication
+# Assignment 8 - IoT System
 # Sophia Thomas 029081102
-# Due: 10/20/24 @ 11:55PM
+# Peter Kim 
+# Due: 12/8/24 @ 11:55PM
 
 import socket
 import ipaddress
+
+# Valid quieries
+valid_queries = [
+    "What is the average moisture inside my kitchen fride in the past three hours?", 
+    "What is the average water consumption per cycle in my smart dishwasher?",
+    "What device consumed more electriciy among my three IoT devices (two refrigerators and a dishwasher)?"
+    ]
+
+def display_valid_queires(): 
+    print("Please try one of the following queries: ")
+    for i, query in enumerate(valid_queries): 
+        print(f"{i+1}. {query}")
 
 # Client initiates a connection
 while True:
@@ -31,15 +44,22 @@ maxBytesToRecieve = 1024
 # with statement closes the socket when client terminates connection 
 with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as tcpSock: 
     tcpSock.connect((serverIP, serverPort))
+    print("Connection to server established.")
+
     
 # Data is exchanged
     messaging = True
 
     while messaging: 
-        msg = input("Enter a message to send the server: ")
-        tcpSock.sendto(bytearray(str(msg), encoding="utf-8"), (serverIP, serverPort))
-        serverResponse = tcpSock.recv(maxBytesToRecieve)
-        print(f"Received: {serverResponse.decode('utf-8')}")
+        print("\nEnter your query (1, 2, 3): ")
+        display_valid_queires()
+        user_input = int(input(">> "))
+        if user_input in range(1, len(valid_queries)+1): 
+            tcpSock.sendto(bytearray(str(valid_queries[user_input-1]), encoding="utf-8"), (serverIP, serverPort))
+            serverResponse = tcpSock.recv(maxBytesToRecieve)
+            print(f"Received: {serverResponse.decode('utf-8')}")
+        else: 
+            print("Sorry, this query cannot be processed. Try again.")
         
 
 
