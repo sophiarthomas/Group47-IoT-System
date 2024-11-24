@@ -5,9 +5,14 @@
 
 import socket
 import ipaddress
+from pymongo.mongo_client import MongoClient
+
+uri = "mongodb+srv://sophiathomas02:malibulost@smartdevices.a2nsj.mongodb.net/?retryWrites=true&w=majority&appName=SmartDevices"
+
+# Create a new client and connect to the server
+client = MongoClient(uri)
 
 # Server sets up a listening socket
-
 serverIP = input("Enter the server ip address: ")
 
 serverPort = int(input("Enter port: "))
