@@ -6,8 +6,15 @@
 import socket
 import ipaddress
 from pymongo.mongo_client import MongoClient
+from dotenv import load_dotenv
+import os
 
-uri = "mongodb+srv://sophiathomas02:malibulost@smartdevices.a2nsj.mongodb.net/?retryWrites=true&w=majority&appName=SmartDevices"
+# Load environment variables from .env file
+load_dotenv()
+
+uri = os.getenv("MONGODB_URI")
+if not uri:
+    raise EnvironmentError("MONGODB_URI is not set in the environment or .env file.")
 
 # Create a new client and connect to the server
 client = MongoClient(uri)
