@@ -1,14 +1,19 @@
 # Assignment 8 - IoT System
 # Sophia Thomas 029081102
-# Peter Kim 
+# Peter Khim 
 # Due: 12/8/24 @ 11:55PM
 
 import socket
 import ipaddress
-import databaseQuery as query
+import pymongo import MongoClient
+
+client = MongoClient('mongodb+srv://peterkhim:eucalyptus@smartdevices.a2nsj.mongodb.net/')
+db = client['test']
+data_collection = db['IoTSmartDevices_virtual']
+metadata_collection = db['IoTSmartDevices_metadata']
+
 
 serverIP = input("Enter the server ip address: ")
-
 serverPort = int(input("Enter port: "))
 
 ## creates listening socket (IPv4, tcp socket stream)

@@ -1,6 +1,6 @@
 # Assignment 8 - IoT System
 # Sophia Thomas 029081102
-# Peter Kim 
+# Peter Khim 
 # Due: 12/8/24 @ 11:55PM
 
 import socket
