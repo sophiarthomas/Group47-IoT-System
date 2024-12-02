@@ -100,4 +100,4 @@ def main(msg):
 
 
 if __name__=="__main__":
-    main("What device consumed more electricity among my three IoT devices (two refrigerators and a dishwasher)?")
+    main()
