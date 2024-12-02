@@ -17,8 +17,54 @@ def avg_water_consumption():
 
 
 # Query 3: Which device consumed more electricity among my three IoT devices (two refrigerators and a dishwasher)?
-def electricity_consumption(): 
-    pass 
+def electricity_consumption(devices):
+    pipeline = [
+        {
+            "$lookup": {
+                "from": "IoTSmartDevices_metadata",
+                "localField": "payload.parent_asset_uid",
+                "foreignField": "assetUid",
+                "as": "device_info"
+            }
+        },
+        {
+            "$unwind": "$device_info"
+        },
+        {
+            "$project": {
+                "device": "$device_info.customAttributes.name",
+                "electricity": {
+                    "$add": [
+                        { "$convert": { "input": "$payload.Ammeter", "to": "double", "onError": 0, "onNull": 0 } },
+                        { "$convert": { "input": "$payload.Ammeter2", "to": "double", "onError": 0, "onNull": 0 } },
+                        { "$convert": { "input": "$payload.Ammeter3", "to": "double", "onError": 0, "onNull": 0 } }
+                    ]
+                },
+                "parent_asset_uid": "$payload.parent_asset_uid"
+            }
+        },
+        {
+            "$group": {
+                "_id": "$parent_asset_uid",
+                "device": { "$first": "$device" },
+                "total_electricity": { "$sum": "$electricity" }
+            }
+        },
+        {
+            "$sort": { "total_electricity": -1 }
+        },
+        {
+            "$limit": 1
+        }
+    ]
+
+    result = list(devices.aggregate(pipeline))
+    print(result)
+
+    if result:
+        print(f"Device with highest electricity consumption: {result[0]['device']} with {result[0]['total_electricity']:.2f} amps")
+    else:
+        print("No electricity data available.")
 
 
 def main(msg): 
@@ -46,12 +92,12 @@ def main(msg):
     print(document)
 
     if msg == "What is the average moisture inside my kitchen fride in the past three hours?": 
-        fridge_moisture()
+        fridge_moisture(virtual)
     elif msg == "What is the average water consumption per cycle in my smart dishwasher?":
-        avg_water_consumption()
-    elif msg == "What device consumed more electriciy among my three IoT devices (two refrigerators and a dishwasher)?":
-        electricity_consumption()
+        avg_water_consumption(virtual)
+    elif msg == "What device consumed more electricity among my three IoT devices (two refrigerators and a dishwasher)?":
+        electricity_consumption(virtual)
 
 
 if __name__=="__main__":
-    main()
+    main("What device consumed more electricity among my three IoT devices (two refrigerators and a dishwasher)?")
