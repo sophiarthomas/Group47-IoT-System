@@ -4,10 +4,23 @@ import os
 import mongoDBkey as key
 from datetime import datetime, timedelta
 
+# Query all devices' names from metadata 
+def get_device_names(metadata):
+    query = {"customAttributes.type": "DEVICE"}
+    devices = metadata.find(query)
+
+    # Storing device names in a list 
+    device_names = []
+    for device in devices: 
+        device_names.append(device["customAttributes"]["name"])
+    
+    return device_names
+
 # Query 1: What is the average moisture inside my kitchen fridge in the past three hours?
-def fridge_moisture(): 
+def fridge_moisture(virtual, fridge_name): 
     # Get the date for 3 hours ago
     three_hours_ago = datetime.now() - timedelta(hours=3)
+    three_hours_ago_unit = int(three_hours_ago.timestamp())    
     pass 
 
 
@@ -86,13 +99,11 @@ def main(msg):
     metadata = db[key.metadata]
     virtual = db[key.virtual]
 
-    # Example 1: Query for the metadata of the Smart Fridge 
-    query = {"customAttributes.name": "Smart Fridge"}
-    document = metadata.find_one(query)
-    print(document)
+    # Device names
+    device_names = get_device_names(metadata)
 
     if msg == "What is the average moisture inside my kitchen fride in the past three hours?": 
-        fridge_moisture(virtual)
+        fridge_moisture(virtual, "Smart_Fridge1")
     elif msg == "What is the average water consumption per cycle in my smart dishwasher?":
         avg_water_consumption(virtual)
     elif msg == "What device consumed more electricity among my three IoT devices (two refrigerators and a dishwasher)?":
