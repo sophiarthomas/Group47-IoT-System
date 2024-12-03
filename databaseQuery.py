@@ -17,20 +17,56 @@ def get_device_names(metadata):
     return device_names
 
 # Query 1: What is the average moisture inside my kitchen fridge in the past three hours?
-def fridge_moisture(virtual, fridge_name): 
-    # Get the date for 3 hours ago
-    three_hours_ago = datetime.now() - timedelta(hours=3)
-    three_hours_ago_unit = int(three_hours_ago.timestamp())    
-    pass 
+def fridge_moisture(virtual, fridge_name):
+    # Get the timestamp for 3 hours ago
+    time = datetime.now()
+    stamp = int(time.timestamp())
+    most_recent_timestamp = stamp
+    most_recent_timestamp_str = str(most_recent_timestamp)
+    three_hours_ago_timestamp = int(most_recent_timestamp - (3 * 3600))
+    three_hours_ago_timestamp_str = str(three_hours_ago_timestamp)
+
+    pipeline = [
+        {
+            "$lookup": {
+                "from": "IoTSmartDevices_metadata",
+                "localField": "payload.parent_asset_uid",
+                "foreignField": "assetUid",
+                "as": "device_info"
+            }
+        },
+        {"$unwind": "$device_info"},
+        {
+            "$match": {
+                "device_info.customAttributes.name": fridge_name,
+                "payload.timestamp": { "$gte": three_hours_ago_timestamp_str, "$lte": most_recent_timestamp_str }
+            }
+        },
+        {
+            "$group": {
+                "_id": None,
+                "average_moisture": {
+                    "$avg": {
+                        "$toDouble": "$payload.Moisture Meter - Water"
+                    }
+                }
+            }
+        }
+    ]
+
+    results = list(virtual.aggregate(pipeline))
+
+    for result in results:
+        print(f"Average Moisture in the last 3 hours: {result['average_moisture']}%")
 
 
 # Query 2: What is the average water consumption per cycle in my smart dishwasher?
-def avg_water_consumption(): 
-    pass 
+def avg_water_consumption(virtual):
+    pass
 
 
 # Query 3: Which device consumed more electricity among my three IoT devices (two refrigerators and a dishwasher)?
-def electricity_consumption(devices):
+def electricity_consumption(virtual):
     pipeline = [
         {
             "$lookup": {
@@ -71,8 +107,7 @@ def electricity_consumption(devices):
         }
     ]
 
-    result = list(devices.aggregate(pipeline))
-    print(result)
+    result = list(virtual.aggregate(pipeline))
 
     if result:
         print(f"Device with highest electricity consumption: {result[0]['device']} with {result[0]['total_electricity']:.2f} amps")
@@ -102,8 +137,8 @@ def main(msg):
     # Device names
     device_names = get_device_names(metadata)
 
-    if msg == "What is the average moisture inside my kitchen fride in the past three hours?": 
-        fridge_moisture(virtual, "Smart_Fridge1")
+    if msg == "What is the average moisture inside my kitchen fridge in the past three hours?":
+        fridge_moisture(virtual, "Smart Fridge")
     elif msg == "What is the average water consumption per cycle in my smart dishwasher?":
         avg_water_consumption(virtual)
     elif msg == "What device consumed more electricity among my three IoT devices (two refrigerators and a dishwasher)?":
