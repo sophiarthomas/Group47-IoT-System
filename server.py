@@ -56,10 +56,15 @@ def main():
                 response = avg_water_consumption(tree)
             elif "consumed more electricity" in data.lower():
                 response = electricity_consumption(tree)
+            elif "shutdown" in data.lower():
+                    response = "Shutting down server."
+                    incomingSocket.send(response.encode('utf-8'))
+                    incomingSocket.close()
+                    myTCPSocket.close()
+                    print("Server shut down.")
+                    return
             else:
                 response = "Invalid query. Please send one of the valid queries."
-
-            # response = query.main(data)
 
             incomingSocket.send(response.encode('utf-8'))
             print(f"Sent response: {response}")

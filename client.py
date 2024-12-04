@@ -10,7 +10,8 @@ import ipaddress
 valid_queries = [
     "What is the average moisture inside my kitchen fride in the past three hours?", 
     "What is the average water consumption per cycle in my smart dishwasher?",
-    "What device consumed more electricity among my three IoT devices (two refrigerators and a dishwasher)?"
+    "What device consumed more electricity among my three IoT devices (two refrigerators and a dishwasher)?",
+    "Shutdown"
     ]
 
 def display_valid_queires(): 
@@ -49,9 +50,13 @@ with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as tcpSock:
     
 # Data is exchanged
     messaging = True
-
+    user_input = 0
+    
     while messaging: 
-        print("\nEnter your query (1, 2, 3): ")
+        if user_input == 4: 
+            print("Shutting down connection.")
+            break
+        print("\nEnter your query (1, 2, 3, 4): ")
         display_valid_queires()
         user_input = int(input(">> "))
         if user_input in range(1, len(valid_queries)+1): 
@@ -60,6 +65,7 @@ with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as tcpSock:
             print(f"Received: {serverResponse.decode('utf-8')}")
         else: 
             print("Sorry, this query cannot be processed. Try again.")
+        
         
 
 
