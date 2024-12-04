@@ -64,7 +64,34 @@ def avg_water_consumption(virtual):
 
 # Query 3: Which device consumed more electricity among my three IoT devices (two refrigerators and a dishwasher)?
 def electricity_consumption(tree):
-    pass
+    devices_of_interest = {
+        "hvx-7ku-6h2-618": "Smart Fridge 1",
+        "a0a655ff-d2a6-404e-81af-a992405c9859": "Smart Fridge 2",
+        "48o-2q4-78n-rvv": "Washer"
+    }
+
+    consumption_data = {device_name: 0 for device_name in devices_of_interest.values()}
+
+    virtual_devices = tree.in_order_traversal()
+
+    for node_data in virtual_devices:
+        virtual_devices = node_data.get('virtual_devices', [])
+
+        for device in virtual_devices:
+            parent_asset_uid = device['payload'].get('parent_asset_uid', '')
+            if parent_asset_uid in devices_of_interest:
+                ammeter_key = 'Ammeter' if 'Ammeter' in device['payload'] else 'Ammeter2'
+                if ammeter_key in device['payload']:
+                    consumption = float(device['payload'][ammeter_key])
+                    device_name = devices_of_interest[parent_asset_uid]
+                    consumption_data[device_name] += consumption
+
+    if consumption_data:
+        max_device = max(consumption_data, key=consumption_data.get)
+        max_consumption = consumption_data[max_device]
+        print(f"Device with highest electricity consumption: {max_device} with {max_consumption} kWh")
+    else:
+        print("No relevant devices found.")
 
 
 def main(msg):
@@ -98,4 +125,4 @@ def main(msg):
 
 
 if __name__ == "__main__":
-    main("What is the average moisture inside my kitchen fridge in the past three hours?")
+    main("What device consumed more electricity among my three IoT devices (two refrigerators and a dishwasher)?")
