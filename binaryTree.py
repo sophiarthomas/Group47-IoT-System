@@ -1,6 +1,7 @@
 from pymongo import MongoClient
 import os
 from dotenv import load_dotenv
+import mongoDBkey as key
 
 class TreeNode:
     def __init__(self, key, data=None):
@@ -65,9 +66,9 @@ def load_data_to_tree():
     if not uri:
         raise EnvironmentError("MONGODB_URI is not set in the environment or .env file.")
     client = MongoClient(uri, tlsAllowInvalidCertificates=True) #REMOVE WHEN DONE
-    db = client['test']
-    virtual_collection = db['IoTSmartDevices_virtual']
-    metadata_collection = db['IoTSmartDevices_metadata']
+    db = client[key.database]
+    virtual_collection = db[key.virtual]
+    metadata_collection = db[key.metadata]
 
     virtual_documents = virtual_collection.find()
     metadata_documents = metadata_collection.find()
