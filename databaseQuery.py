@@ -3,21 +3,7 @@ from dotenv import load_dotenv
 import os
 import mongoDBkey as key
 from datetime import datetime, timedelta
-from binaryTree import load_data_to_tree
-
-
-# Query all devices' names from metadata
-def get_device_names(metadata):
-    query = {"customAttributes.type": "DEVICE"}
-    devices = metadata.find(query)
-
-    # Storing device names in a list
-    device_names = []
-    for device in devices:
-        device_names.append(device["customAttributes"]["name"])
-
-    return device_names
-
+from binaryTree import load_data_to_tree, get_all_devices_as_dict
 
 # Query 1: What is the average moisture inside my kitchen fridge in the past three hours?
 def fridge_moisture(tree):
@@ -64,11 +50,13 @@ def avg_water_consumption(virtual):
 
 # Query 3: Which device consumed more electricity among my three IoT devices (two refrigerators and a dishwasher)?
 def electricity_consumption(tree):
-    devices_of_interest = {
-        "hvx-7ku-6h2-618": "Smart Fridge 1",
-        "a0a655ff-d2a6-404e-81af-a992405c9859": "Smart Fridge 2",
-        "48o-2q4-78n-rvv": "Washer"
-    }
+
+    devices_of_interest = get_all_devices_as_dict(tree)
+    # {
+    #     "hvx-7ku-6h2-618": "Smart Fridge 1",
+    #     "a0a655ff-d2a6-404e-81af-a992405c9859": "Smart Fridge 2",
+    #     "48o-2q4-78n-rvv": "Washer"
+    # }
 
     consumption_data = {device_name: 0 for device_name in devices_of_interest.values()}
 
@@ -95,23 +83,23 @@ def electricity_consumption(tree):
 
 
 def main(msg):
-    # Load environment variables from .env file
-    load_dotenv()
+    # # Load environment variables from .env file
+    # load_dotenv()
 
-    uri = os.getenv("MONGODB_URI")
-    if not uri:
-        raise EnvironmentError("MONGODB_URI is not set in the environment or .env file.")
+    # uri = os.getenv("MONGODB_URI")
+    # if not uri:
+    #     raise EnvironmentError("MONGODB_URI is not set in the environment or .env file.")
 
-    # Create a new client and connect to the server
-    client = MongoClient(uri, tlsAllowInvalidCertificates=True) # REMOVE WHEN DONE
+    # # Create a new client and connect to the server
+    # client = MongoClient(uri, tlsAllowInvalidCertificates=True) # REMOVE WHEN DONE
 
-    # Database
-    db = client[key.database]
+    # # Database
+    # db = client[key.database]
 
-    # Collections
-    devices = db[key.devices]
-    metadata = db[key.metadata]
-    virtual = db[key.virtual]
+    # # Collections
+    # devices = db[key.devices]
+    # metadata = db[key.metadata]
+    # virtual = db[key.virtual]
 
     # Load data into tree
     tree = load_data_to_tree()
