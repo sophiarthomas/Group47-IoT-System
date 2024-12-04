@@ -1,6 +1,7 @@
 from pymongo import MongoClient
 import os
 from dotenv import load_dotenv
+import mongoDBkey as mongo
 
 class TreeNode:
     def __init__(self, key, data=None):
@@ -60,14 +61,20 @@ class BinaryTree:
 
 # Function to Load Data from MongoDB and Build Tree
 def load_data_to_tree():
+    # Load environment variables from .env file
     load_dotenv()
+
     uri = os.getenv("MONGODB_URI")
     if not uri:
         raise EnvironmentError("MONGODB_URI is not set in the environment or .env file.")
-    client = MongoClient(uri, tlsAllowInvalidCertificates=True) #REMOVE WHEN DONE
-    db = client['test']
-    virtual_collection = db['IoTSmartDevices_virtual']
-    metadata_collection = db['IoTSmartDevices_metadata']
+
+    # Create a new client and connect to the server
+    client = MongoClient(uri, tlsAllowInvalidCertificates=True) # REMOVE WHEN DONE
+
+    # Database
+    db = client[mongo.database]
+    virtual_collection = db[mongo.virtual]
+    metadata_collection = db[mongo.metadata]
 
     virtual_documents = virtual_collection.find()
     metadata_documents = metadata_collection.find()
@@ -97,6 +104,29 @@ def load_data_to_tree():
         tree.insert(str(parent_asset_uid), combined_data)
 
     return tree
+
+def get_all_devices_as_dict(tree):
+    """
+    Retrieves all devices from the binary search tree as a dictionary.
+    Args:
+        tree (BinaryTree): The binary tree containing devices.
+    Returns:
+        dict: A dictionary where keys are assetUid values and values are device names.
+    """
+    nodes = tree.in_order_traversal()
+    devices_dict = {}
+
+    for node_data in nodes:
+        if node_data:  # Ensure the node has data
+            metadata = node_data.get('metadata', {})
+            asset_uid = metadata.get('assetUid')
+            device_name = metadata.get('customAttributes', {}).get('name', 'Unknown Device')
+            
+            # Skip devices without a valid name or assetUid
+            if asset_uid and device_name != 'Unknown Device':
+                devices_dict[asset_uid] = device_name
+
+    return devices_dict
 
 # if __name__ == "__main__":
 #     tree = load_data_to_tree()
