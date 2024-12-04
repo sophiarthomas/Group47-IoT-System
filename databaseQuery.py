@@ -58,8 +58,39 @@ def fridge_moisture(tree):
 
 
 # Query 2: What is the average water consumption per cycle in my smart dishwasher?
-def avg_water_consumption(virtual):
-    pass
+def avg_water_consumption(tree):
+    dishwasher_uid = "48o-2q4-78n-rvv"
+    device_name = "Smart Washer"
+
+    water_consumption_values = []
+
+    virtual_devices = tree.in_order_traversal()
+
+    for node_data in virtual_devices:
+        virtual_devices = node_data.get('virtual_devices', [])
+        #print(virtual_devices)
+
+        for device in virtual_devices:
+            #print(device)
+            #print()
+            parent_asset_uid = device['payload'].get('parent_asset_uid')
+
+            if parent_asset_uid == dishwasher_uid:
+                # print(device)
+                # print()
+
+                if 'Water Consumption Sensor' in device['payload']:
+                    water_consumption = float(device['payload']['Water Consumption Sensor'])
+                    #print(water_consumption_values)
+                    water_consumption_values.append(water_consumption)
+
+    if water_consumption_values:
+        avg_water = sum(water_consumption_values) / len(water_consumption_values)           # Base off assumption on google that this is gpm?
+        print(f"Average water consumption per cycle for {device_name}: {avg_water:.2f} gallons per minute") # need to decide units, bc dataniz don't care
+    else:
+        print(f"No water consumption data found for {device_name}.")
+
+    # Total Minutes x Gallons per minute = Total Gallons used per watering cycle
 
 
 # Query 3: Which device consumed more electricity among my three IoT devices (two refrigerators and a dishwasher)?
@@ -125,4 +156,4 @@ def main(msg):
 
 
 if __name__ == "__main__":
-    main("What device consumed more electricity among my three IoT devices (two refrigerators and a dishwasher)?")
+    main("What is the average water consumption per cycle in my smart dishwasher?")
