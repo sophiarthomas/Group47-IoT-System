@@ -134,3 +134,17 @@ def get_all_devices_as_dict(tree):
 
     return devices_dict
 
+def get_fridge_devices(device_dict):
+    """
+    Retrieves all fridge devices by filtering the dictionary of all devices.
+
+    Returns:
+        dict: A dictionary of fridge devices with their UIDs as keys and data as values.
+    """
+    fridge_devices = {
+        uid: name
+        for uid, name in device_dict.items()
+        if "fridge" in name.lower()
+    }
+    return fridge_devices
+

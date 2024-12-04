@@ -3,7 +3,7 @@ import os
 from datetime import datetime, timedelta
 from binaryTree import get_all_devices_as_dict
 
-def fridge_moisture(tree):
+def fridge_moisture(tree, uid): # Change function to utilize the uid (metadata) argument
     """
     Query 1: What is the average moisture inside my kitchen fridge in the past three hours?
     Args: 
@@ -123,4 +123,3 @@ def electricity_consumption(tree):
         return f"Device with highest electricity consumption: {max_device} with {max_consumption} kWh"
     else:
         return "No relevant devices found."
-

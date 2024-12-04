@@ -53,18 +53,34 @@ with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as tcpSock:
     user_input = 0
     
     while messaging: 
-        if user_input == 4: 
-            print("Shutting down connection.")
-            break
         print("\nEnter your query (1, 2, 3, 4): ")
         display_valid_queires()
         user_input = int(input(">> "))
+
         if user_input in range(1, len(valid_queries)+1): 
-            tcpSock.sendto(bytearray(str(valid_queries[user_input-1]), encoding="utf-8"), (serverIP, serverPort))
-            serverResponse = tcpSock.recv(maxBytesToRecieve)
-            print(f"Received: {serverResponse.decode('utf-8')}")
+            query = valid_queries[user_input-1]
+            tcpSock.send(query.encode('utf-8'))
+            
+            while True: 
+                serverResponse = tcpSock.recv(maxBytesToRecieve).decode('utf-8')
+                print(f"Server: {serverResponse}") 
+
+                if "check" in serverResponse.lower(): 
+                    user_follow_up = input("followup >> ")
+                    tcpSock.send(user_follow_up.encode('utf-8'))
+                else: 
+                    break
+
+            if "shutdown" in query.lower():
+                print("Shutting down connection.")
+                break
         else: 
-            print("Sorry, this query cannot be processed. Try again.")
+            print("Invalid query. Try again.")
+        #     tcpSock.sendto(bytearray(str(valid_queries[user_input-1]), encoding="utf-8"), (serverIP, serverPort))
+        #     serverResponse = tcpSock.recv(maxBytesToRecieve)
+        #     print(f"Received: {serverResponse.decode('utf-8')}")
+        # else: 
+        #     print("Sorry, this query cannot be processed. Try again.")
         
         
 

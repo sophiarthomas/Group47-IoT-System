@@ -6,7 +6,7 @@ import socket
 import ipaddress
 from databaseQuery import fridge_moisture, avg_water_consumption, electricity_consumption
 import databaseQuery as query 
-from binaryTree import load_data_to_tree
+from binaryTree import load_data_to_tree, get_all_devices_as_dict, get_fridge_devices
 
 
 def main():
@@ -36,6 +36,7 @@ def main():
     myTCPSocket.listen(1)
 
     tree = load_data_to_tree()
+    devices_dict = get_all_devices_as_dict(tree)
 
     while True:
         print("Waiting for connection.")
@@ -51,11 +52,33 @@ def main():
 
             # Directly call the relevant functions
             if "average moisture" in data.lower():
-                response = fridge_moisture(tree)
+                # response = fridge_moisture(tree)
+                ##########################################
+                fridge_devices = get_fridge_devices(devices_dict)
+                if not fridge_devices:
+                    response = "No fridge devices found in the system."
+                else:
+                    options = "\n".join([f"{i+1}. {fridge}" for i, fridge in enumerate(fridge_devices)])
+                    incomingSocket.send(f"Which fridge do you want to check?\n{options}".encode('utf-8'))
+
+                    # Receive the user's choice
+                    choice = incomingSocket.recv(1024).decode('utf-8').strip()
+                    try:
+                        selected_index = int(choice) - 1
+                        if 0 <= selected_index < len(fridge_devices):
+                            selected_uid = list(devices_dict.keys())[selected_index]
+                            response = fridge_moisture(tree, device_uid=selected_uid) ## Fridge Moisture needs reworking
+                        else:
+                            response = "Invalid selection."
+                    except ValueError:
+                        response = "Invalid input. Please enter a number."
+                ##########################################
             elif "average water consumption" in data.lower():
                 response = avg_water_consumption(tree)
+
             elif "consumed more electricity" in data.lower():
                 response = electricity_consumption(tree)
+
             elif "shutdown" in data.lower():
                     response = "Shutting down server."
                     incomingSocket.send(response.encode('utf-8'))
