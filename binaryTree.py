@@ -59,8 +59,12 @@ class BinaryTree:
             self._in_order_traversal(current_node.right, nodes)
 
 
-# Function to Load Data from MongoDB and Build Tree
 def load_data_to_tree():
+    """
+    Load Data from MongoDB and Build Tree
+    Args: None
+    Returns: BinaryTree
+    """
     # Load environment variables from .env file
     load_dotenv()
 

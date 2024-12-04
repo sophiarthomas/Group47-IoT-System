@@ -5,6 +5,9 @@
 import socket
 import ipaddress
 from databaseQuery import fridge_moisture, avg_water_consumption, electricity_consumption
+import databaseQuery as query 
+from binaryTree import load_data_to_tree
+
 
 def main():
     myTCPSocket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
@@ -32,6 +35,8 @@ def main():
 
     myTCPSocket.listen(1)
 
+    tree = load_data_to_tree()
+
     while True:
         print("Waiting for connection.")
         incomingSocket, incomingAddress = myTCPSocket.accept()
@@ -53,6 +58,8 @@ def main():
                 response = electricity_consumption()
             else:
                 response = "Invalid query. Please send one of the valid queries."
+
+            # response = query.main(data)
 
             incomingSocket.send(response.encode('utf-8'))
             print(f"Sent response: {response}")

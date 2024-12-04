@@ -83,11 +83,13 @@ def avg_water_consumption(tree):
 def electricity_consumption(tree):
 
     devices_of_interest = get_all_devices_as_dict(tree)
-    # {
-    #     "hvx-7ku-6h2-618": "Smart Fridge 1",
-    #     "a0a655ff-d2a6-404e-81af-a992405c9859": "Smart Fridge 2",
-    #     "48o-2q4-78n-rvv": "Washer"
-    # }
+    """ 
+    example_dict = {
+         "hvx-7ku-6h2-618": "Smart Fridge 1",
+         "a0a655ff-d2a6-404e-81af-a992405c9859": "Smart Fridge 2",
+         "48o-2q4-78n-rvv": "Washer"
+    }
+    """
 
     consumption_data = {device_name: 0 for device_name in devices_of_interest.values()}
 
@@ -135,12 +137,14 @@ def main(msg):
     # Load data into tree
     tree = load_data_to_tree()
 
-    if msg == "What is the average moisture inside my kitchen fridge in the past three hours?":
-        fridge_moisture(tree)
-    elif msg == "What is the average water consumption per cycle in my smart dishwasher?":
-        avg_water_consumption(tree)
-    elif msg == "What device consumed more electricity among my three IoT devices (two refrigerators and a dishwasher)?":
-        electricity_consumption(tree)
+    if "average moisture" in msg.lower():
+        response = fridge_moisture(tree)
+    elif "average water consumption" in msg.lower():
+        response = avg_water_consumption(tree)
+    elif "consumed more electricity" in msg.lower():
+        response = electricity_consumption(tree)
+    else:
+        response = "Invalid query. Please send one of the valid queries."
 
 
 if __name__ == "__main__":
