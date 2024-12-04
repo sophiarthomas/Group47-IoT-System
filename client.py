@@ -10,7 +10,7 @@ import ipaddress
 valid_queries = [
     "What is the average moisture inside my kitchen fride in the past three hours?", 
     "What is the average water consumption per cycle in my smart dishwasher?",
-    "What device consumed more electriciy among my three IoT devices (two refrigerators and a dishwasher)?"
+    "What device consumed more electricity among my three IoT devices (two refrigerators and a dishwasher)?"
     ]
 
 def display_valid_queires(): 

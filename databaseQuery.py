@@ -38,9 +38,9 @@ def fridge_moisture(tree):
     # Calculate the average moisture.
     if count > 0:
         average_moisture = total_moisture / count
-        print(f"Average Moisture Meter value in last 3 hours: {average_moisture}%")
+        return "Average Moisture Meter value in last 3 hours: {average_moisture}%"
     else:
-        print("No valid Moisture Meter data within the specified time range.")
+        return "No valid Moisture Meter data within the specified time range."
 
 
 # Query 2: What is the average water consumption per cycle in my smart dishwasher?
@@ -72,9 +72,9 @@ def avg_water_consumption(tree):
 
     if water_consumption_values:
         avg_water = sum(water_consumption_values) / len(water_consumption_values)           # Base off assumption on google that this is gpm?
-        print(f"Average water consumption per cycle for {device_name}: {avg_water:.2f} gallons per minute") # need to decide units, bc dataniz don't care
+        return f"Average water consumption per cycle for {device_name}: {avg_water:.2f} gallons per minute" # need to decide units, bc dataniz don't care
     else:
-        print(f"No water consumption data found for {device_name}.")
+        return f"No water consumption data found for {device_name}."
 
     # Total Minutes x Gallons per minute = Total Gallons used per watering cycle
 
@@ -110,9 +110,9 @@ def electricity_consumption(tree):
     if consumption_data:
         max_device = max(consumption_data, key=consumption_data.get)
         max_consumption = consumption_data[max_device]
-        print(f"Device with highest electricity consumption: {max_device} with {max_consumption} kWh")
+        return f"Device with highest electricity consumption: {max_device} with {max_consumption} kWh"
     else:
-        print("No relevant devices found.")
+        return "No relevant devices found."
 
 
 def main(msg):

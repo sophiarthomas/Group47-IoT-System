@@ -51,11 +51,11 @@ def main():
 
             # Directly call the relevant functions
             if "average moisture" in data.lower():
-                response = fridge_moisture()
+                response = fridge_moisture(tree)
             elif "average water consumption" in data.lower():
-                response = avg_water_consumption()
+                response = avg_water_consumption(tree)
             elif "consumed more electricity" in data.lower():
-                response = electricity_consumption()
+                response = electricity_consumption(tree)
             else:
                 response = "Invalid query. Please send one of the valid queries."
 
