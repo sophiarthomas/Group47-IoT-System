@@ -1,12 +1,16 @@
 from pymongo.mongo_client import MongoClient
-from dotenv import load_dotenv
 import os
-import mongoDBkey as key
 from datetime import datetime, timedelta
-from binaryTree import load_data_to_tree, get_all_devices_as_dict
+from binaryTree import get_all_devices_as_dict
 
-# Query 1: What is the average moisture inside my kitchen fridge in the past three hours?
 def fridge_moisture(tree):
+    """
+    Query 1: What is the average moisture inside my kitchen fridge in the past three hours?
+    Args: 
+        tree (BinaryTree): Device data retrieved from MongoDB
+    Returns: 
+        str: Result of the query
+    """
     # Get the timestamp for 3 hours ago
     time = datetime.now()
     most_recent_timestamp = int(time.timestamp())
@@ -43,8 +47,14 @@ def fridge_moisture(tree):
         return "No valid Moisture Meter data within the specified time range."
 
 
-# Query 2: What is the average water consumption per cycle in my smart dishwasher?
 def avg_water_consumption(tree):
+    """
+    Query 2: What is the average water consumption per cycle in my smart dishwasher?
+    Args: 
+        tree (BinaryTree): Device data retrieved from MongoDB
+    Returns: 
+        str: Result of the query
+    """
     dishwasher_uid = "48o-2q4-78n-rvv"
     device_name = "Smart Washer"
 
@@ -114,38 +124,3 @@ def electricity_consumption(tree):
     else:
         return "No relevant devices found."
 
-
-def main(msg):
-    # # Load environment variables from .env file
-    # load_dotenv()
-
-    # uri = os.getenv("MONGODB_URI")
-    # if not uri:
-    #     raise EnvironmentError("MONGODB_URI is not set in the environment or .env file.")
-
-    # # Create a new client and connect to the server
-    # client = MongoClient(uri, tlsAllowInvalidCertificates=True) # REMOVE WHEN DONE
-
-    # # Database
-    # db = client[key.database]
-
-    # # Collections
-    # devices = db[key.devices]
-    # metadata = db[key.metadata]
-    # virtual = db[key.virtual]
-
-    # Load data into tree
-    tree = load_data_to_tree()
-
-    if "average moisture" in msg.lower():
-        response = fridge_moisture(tree)
-    elif "average water consumption" in msg.lower():
-        response = avg_water_consumption(tree)
-    elif "consumed more electricity" in msg.lower():
-        response = electricity_consumption(tree)
-    else:
-        response = "Invalid query. Please send one of the valid queries."
-
-
-if __name__ == "__main__":
-    main("What is the average water consumption per cycle in my smart dishwasher?")

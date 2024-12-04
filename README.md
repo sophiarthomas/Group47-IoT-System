@@ -36,13 +36,15 @@ Welcome to the Group47 IoT System repository! This project is an implementation 
    ```bash
    git clone https://github.com/sophiarthomas/Group47-IoT-System.git
    cd Group47-IoT-System
-
-
 ## Running the System
 
 ### Database
 - Start MongoDB database
     - MongoDB Atlas: Configure Atlas cluster and add your database URI to the .env file
+    - Install packages
+    ```
+    python -m pip install pymongo
+    python -m pip install python-dotenv
 
 ### Server
     python server.py

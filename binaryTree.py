@@ -62,8 +62,10 @@ class BinaryTree:
 def load_data_to_tree():
     """
     Load Data from MongoDB and Build Tree
-    Args: None
-    Returns: BinaryTree
+    Args: 
+        None
+    Returns: 
+        tree (BinaryTree): The binary tree containing data from MongoDB
     """
     # Load environment variables from .env file
     load_dotenv()
@@ -131,16 +133,4 @@ def get_all_devices_as_dict(tree):
                 devices_dict[asset_uid] = device_name
 
     return devices_dict
-
-# if __name__ == "__main__":
-#     tree = load_data_to_tree()
-
-#     parent_asset_uid_to_search = "48o-2q4-78n-rvv"
-#     result = tree.search(parent_asset_uid_to_search)
-
-#     if result:
-#         print(f"Found {parent_asset_uid_to_search}:")
-#         print(result)
-#     else:
-#         print(f"No {parent_asset_uid_to_search}!!!!!!!!!!!!.")
 
