@@ -42,7 +42,7 @@ def fridge_moisture(tree):
     # Calculate the average moisture.
     if count > 0:
         average_moisture = total_moisture / count
-        return "Average Moisture Meter value in last 3 hours: {average_moisture}%"
+        return f"Average Moisture Meter value in last 3 hours: {average_moisture}%"
     else:
         return "No valid Moisture Meter data within the specified time range."
 
